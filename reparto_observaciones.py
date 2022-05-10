@@ -1,4 +1,4 @@
-from math import ceil, sqrt
+from math import ceil, sqrt, floor
 class RepartoObservaciones:
     def __init__(self, df):
         self.df = df
@@ -7,18 +7,16 @@ class RepartoObservaciones:
     def cantidad_de_observaciones(self):
         self.cantidad = self.df['Cantidad'].sum()
 
-    def media(self):
+
+    def calcular_media(self):
         temp = 0
         for i in range(len(self.df)):
             temp += self.df.iloc[i][0] * self.df.iloc[i][1]
 
-        media = temp / self.cantidad
-        self.media = media
+        self.media = temp / self.cantidad
 
-    def get_media(self):
-        return self.media
 
-    def varianza_y_desviacion(self):
+    def calcular_varianza_y_desviacion(self):
         temp = 0
         for i in range(len(self.df)):
             temp += self.df.iloc[i][1] *  pow((self.df.iloc[i][0] - self.media), 2)
@@ -26,7 +24,15 @@ class RepartoObservaciones:
         self.varianza = temp / self.cantidad
         self.desviacion = sqrt(self.varianza)
 
+
+    def calcular_variables(self):
+        self.cantidad_de_observaciones()
+        self.calcular_media()
+        self.calcular_varianza_y_desviacion()
+
+
     def entra_en_el_rango(self, LI, LS):
+        temp = 0
         for i in range(len(self.df)):
             if self.df.iloc[i][0] >= LI and self.df.iloc[i][0] <= LS:
                 temp += self.df.iloc[i][1]
@@ -35,17 +41,22 @@ class RepartoObservaciones:
 
         return porcentaje
 
-    def rg(self, es_68_95_o_99 = 68):
-        if int(es_68_95_o_99) == 68:
-            k = 1
-        elif int(es_68_95_o_99) == 95:
-            k = 2
-        else:
-            k = 3
+    def rg(self, k):
+        LI = round(self.media - k*self.desviacion, 2)
+        LS = round(self.media + k*self.desviacion, 2)
 
-
-
-        LI = self.media - k*self.desviacion
-        LS = self.media + k*self.desviacion
         return self.entra_en_el_rango(LI, LS), LI, LS
+
+    def gets(self, lo_que_se_quiere, k = 1):
+        if lo_que_se_quiere.lower() == 'media':
+            return self.media
+
+        elif lo_que_se_quiere.lower() == 'varianza':
+            return self.varianza
+
+        elif lo_que_se_quiere.lower() == 'desviacion':
+            return self.desviacion
+
+        elif lo_que_se_quiere.lower() == 'rango':
+            return self.rg(k)
 
