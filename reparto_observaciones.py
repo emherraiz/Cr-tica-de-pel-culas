@@ -1,4 +1,4 @@
-from math import ceil, sqrt, floor
+from math import sqrt
 class RepartoObservaciones:
     def __init__(self, df):
         self.df = df
